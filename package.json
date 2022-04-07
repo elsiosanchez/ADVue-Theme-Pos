@@ -1,0 +1,23 @@
+{
+  "name": "ADVue-Theme-Pos",
+  "version": "1.0.0",
+  "description": "Point of Sale Theme for ADempiere Vue",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elsiosanchez/ADVue-Theme-Pos.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/elsiosanchez/ADVue-Theme-Pos/issues"
+  },
+  "homepage": "https://github.com/elsiosanchez/ADVue-Theme-Pos#readme",
+  "dependencies": {
+    "tasksfile": "^5.1.1"
+  }
+}
