@@ -24,7 +24,7 @@ In order to use the new ADVue Theme Pos theme in your [ADempiere Vue](https://gi
 1. Configure `ADVue-Theme-Pos` repository as a git submodule in theme path of your [ADempiere Vue](https://github.com/adempiere/adempiere-vue) workspace, and then track `develop` branch:
 
    ```
-   git submodule add -b develop git@github.com:elsiosanchez/ADVue-Theme-Pos.git themes/pos
+   git submodule add -b develop git@github.com:elsiosanchez/ADVue-Theme-Pos.git src/themes/pos
    ```
 
 1. Fetch all the data:
@@ -35,6 +35,10 @@ In order to use the new ADVue Theme Pos theme in your [ADempiere Vue](https://gi
 1. Generate `local.json` file from script `generate-local-config.js`:
    ```
    node themes/pos/scripts/generate-local-config.js
+   ```
+1. Change the path of the view files with the path of the new theme:
+   ```
+   node themes/pos/scripts/set-new-view-path.js
    ```
 1. Update [ADempiere Vue](https://github.com/adempiere/adempiere-vue) configuration by copying `local.json` file from `src/themes/pos` to root `config` directory.
 
