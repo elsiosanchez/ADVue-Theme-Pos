@@ -24,7 +24,7 @@ In order to use the new ADVue Theme Pos theme in your [ADempiere Vue](https://gi
 1. Configure `ADVue-Theme-Pos` repository as a git submodule in theme path of your [ADempiere Vue](https://github.com/adempiere/adempiere-vue) workspace, and then track `develop` branch:
 
    ```
-   git submodule add -b develop git@github.com:elsiosanchez/ADVue-Theme-Pos.git themes/pos
+   git submodule add -b develop git@github.com:elsiosanchez/ADVue-Theme-Pos.git src/themes/pos
    ```
 
 1. Fetch all the data:
