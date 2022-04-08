@@ -34,7 +34,7 @@ In order to use the new ADVue Theme Pos theme in your [ADempiere Vue](https://gi
    ```
 1. Generate `local.json` file from script `generate-local-config.js`:
    ```
-   node themes/pos/scripts/generate-local-config.js
+   node src/themes/pos/scripts/generate-local-config.js
    ```
 1. Update [ADempiere Vue](https://github.com/adempiere/adempiere-vue) configuration by copying `local.json` file from `src/themes/pos` to root `config` directory.
 
