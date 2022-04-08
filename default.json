@@ -43,6 +43,6 @@
     "session": {
       "timeout": 300000
     },
-    "theme": "themes/pos/"
+    "theme": "src/themes/pos"
   }
   
