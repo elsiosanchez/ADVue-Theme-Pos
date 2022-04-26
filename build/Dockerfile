@@ -1,23 +1,23 @@
 FROM node:12-alpine
 
-LABEL maintainer="elsiosanchez@gmail.com" \
-	description="ADVue-Theme-Pos"
+LABEL maintainer="ysenih@erpya.com" \
+	description="ERPYA e-Commerce"
 
 # Init ENV with default values
 ENV VS_ENV=prod \
-    REPOSITORY_PATH="/var/www/adempiere-vue" \
-    REPOSITORY_NAME="adempiere-vue" \
-    URL_BASE_REPOSITORY="git@github.com:adempiere/adempiere-vue.git" \
-		URL_THEME_REPOSITORY="git@github.com:elsiosanchez/ADVue-Theme-Pos.git" \
-    SERVER_PORT="0527" \
+    REPOSITORY_PATH="/var/www/vue-storefront" \
+    REPOSITORY_NAME="vue-storefront" \
+    URL_BASE_REPOSITORY="https://github.com/erpcya/vue-storefront-1.git" \
+		URL_THEME_REPOSITORY="https://github.com/erpcya/vsf-capybara-custom-theme.git" \
+    SERVER_PORT="3000" \
     SERVER_HOST="localhost" \
     API_URL="http:\/\/localhost:8085" \
-    # STORE_INDEX="vue_storefront_catalog" \
+    STORE_INDEX="vue_storefront_catalog" \
     MEMORY_RESTART="1G" \
     EXEC_INSTANCES="1"
 
-COPY dist-app/ /var/www/ADVue-Theme-Pos/
-
+COPY dist-app/ /var/www/vsf-capybara-custom-theme/
+erpcya
 RUN rm -rf /var/cache/apk/* && \
   apk add --no-cache --virtual .build-deps ca-certificates wget python3 make g++ \
   && apk add --no-cache git \
@@ -34,8 +34,8 @@ RUN rm -rf /var/cache/apk/* && \
      git clone $URL_BASE_REPOSITORY $REPOSITORY_PATH && \
      cd $REPOSITORY_PATH && \
 	 yarn global add lerna && \
-     git submodule add /var/www/ADVue-Theme-Pos ./src/themes/pos && \
-     git submodule update --init ./src/themes/pos && \
+     git submodule add /var/www/vsf-capybara-custom-theme ./src/themes/erpya && \
+     git submodule update --init ./src/themes/erpya && \
      lerna bootstrap && \
      chmod -R 777 $REPOSITORY_PATH
 
