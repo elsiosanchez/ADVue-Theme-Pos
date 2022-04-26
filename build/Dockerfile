@@ -17,7 +17,6 @@ ENV VS_ENV=prod \
     EXEC_INSTANCES="1"
 
 COPY dist-app/ /var/www/vsf-capybara-custom-theme/
-erpcya
 RUN rm -rf /var/cache/apk/* && \
   apk add --no-cache --virtual .build-deps ca-certificates wget python3 make g++ \
   && apk add --no-cache git \
