@@ -17,9 +17,9 @@ on:
 jobs:
 
   # Publish docker image in Github Container Registry to application
-    # Build dist application VSF-Capybara-Custom-Theme
+    # Build dist application ADVue-Theme-Pos
   build-app:
-    name: Build dist vsf-capybara-custom-theme
+    name: Build dist ADVue-Theme-Pos
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -37,15 +37,15 @@ jobs:
         uses: TheDoctor0/zip-release@0.6.0
         with:
           type: 'zip'
-          filename: 'vsf-capybara-custom-theme.zip'
+          filename: 'ADVue-Theme-Pos.zip'
           path: './'
           exclusions: './dist ./docker ./docs'
 
       - name: Upload app as artifact
         uses: actions/upload-artifact@v2
         with:
-          name: vsf-capybara-custom-theme        
-          path: ./vsf-capybara-custom-theme.zip
+          name: ADVue-Theme-Pos        
+          path: ./ADVue-Theme-Pos.zip
 
 
   # Publish docker image in Github Container Registry to application
@@ -61,10 +61,10 @@ jobs:
       - name: Download build dist app
         uses: actions/download-artifact@v2
         with:
-          name: vsf-capybara-custom-theme
+          name: ADVue-Theme-Pos
 
       - name: Uncompress dist files
-        run: unzip vsf-capybara-custom-theme.zip -d dist-app
+        run: unzip ADVue-Theme-Pos.zip -d dist-app
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
