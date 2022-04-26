@@ -1,17 +1,25 @@
+# This workflow will run tests using node and then publish a package to GitHub Container Registry and Docker Hub Regitry when a pushed into main branches
+# This file was contributed by ysenih@erpya.com from ERP Consultores y Asociados, C.A
+
 name: Push Main Branches
 
 on:
+  # Triggers the workflow on push events but only for the develop branch
   push:
-    branches: main
-  pull_request:
-    branches: main
+    branches:
+      - master
+      - master-i18n
+      - cutomer/*
+  release:
+    types: 
+      - published
 
 jobs:
 
   # Publish docker image in Github Container Registry to application
-    # Build dist application ADVue-Theme-Pos
+    # Build dist application VSF-Capybara-Custom-Theme
   build-app:
-    name: Build dist ADVue-Theme-Pos
+    name: Build dist VSF-Capybara-Custom-Theme
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -20,23 +28,29 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
 
+      - name: Node configuration
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      
       - name: Compress files for application dist
         uses: TheDoctor0/zip-release@0.6.0
         with:
           type: 'zip'
-          filename: 'ADVue-Theme-Pos.zip'
+          filename: 'vsf-capybara-custom-theme.zip'
           path: './'
           exclusions: './dist ./docker ./docs'
 
       - name: Upload app as artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ADVue-Theme-Pos        
-          path: ./ADVue-Theme-Pos.zip
+          name: vsf-capybara-custom-theme        
+          path: ./vsf-capybara-custom-theme.zip
 
-  # Publish docker image in Docker Hub registry to application
-  push-imame-dhr:
-    name: Push Docker image to Docker Hub
+
+  # Publish docker image in Github Container Registry to application
+  push-imame-ghcr:
+    name: Push Docker image to GitHub Container
     needs:
       - build-app
     runs-on: ubuntu-latest
@@ -47,30 +61,23 @@ jobs:
       - name: Download build dist app
         uses: actions/download-artifact@v2
         with:
-          name: ADVue-Theme-Pos   
-          path: dist
+          name: vsf-capybara-custom-theme
+
+      - name: Uncompress dist files
+        run: unzip vsf-capybara-custom-theme.zip -d dist-app
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
-          # CONFIGURE DOCKER SECRETS INTO REPOSITORY
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set Lower Case to owner and repository
         run: |
-          ORG=$OWNER
-          if [ -n "${{ secrets.DOCKERHUB_ORG }}" ]; then
-            echo "Set secret DOCKERHUB_ORG as namespace"
-            ORG=${{ secrets.DOCKERHUB_ORG }}
-          else
-            echo "Set OWNER ($OWNER) as namespace "
-          fi
-          echo "ORG_LC=${ORG,,}" >> ${GITHUB_ENV}
           echo "OWNER_LC=${OWNER,,}" >> ${GITHUB_ENV}
           echo "REPO_LC=${NAME,,}" >> ${GITHUB_ENV}
         env:
-          # to docker image namespace
           OWNER: '${{ github.repository_owner }}'
           NAME: '${{ github.event.repository.name }}'
 
@@ -85,7 +92,45 @@ jobs:
           file: ./build/Dockerfile
           push: true
           tags: |
-            ${{ env.ORG_LC }}/${{ env.REPO_LC }}:${{ steps.branch-name.outputs.current_branch }}
-            ${{ env.ORG_LC }}/${{ env.REPO_LC }}:${{ github.sha }}
+            ghcr.io/${{ env.OWNER_LC }}/${{ env.REPO_LC }}:${{ steps.branch-name.outputs.current_branch }}
+            ghcr.io/${{ env.OWNER_LC }}/${{ env.REPO_LC }}:${{ github.sha }}
+
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
+
+  # Publish docker image in Digital Ocean registry to application
+  push-imame-ddor:
+    name: Push Docker image to Digital Ocean
+    needs:
+      - build-app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Download build dist app
+        uses: actions/download-artifact@v2
+        with:
+          name: vsf-capybara-custom-theme
+
+      - name: Uncompress dist files
+        run: unzip vsf-capybara-custom-theme.zip -d dist-app
+
+      - name: Get branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v4.8
+
+      - name: Build image
+        run: docker build -t vsf-capybara-custom-theme -f build/Dockerfile .
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Log in to DO Container Registry
+        run: doctl registry login --expiry-seconds 600
+      - name: Tag image
+        run:
+          docker tag vsf-capybara-custom-theme registry.digitalocean.com/erpya/vsf-capybara-custom-theme:${{ steps.branch-name.outputs.current_branch }}
+      - name: Push image to DO Container Registry
+        run: docker push registry.digitalocean.com/erpya/vsf-capybara-custom-theme:${{ steps.branch-name.outputs.current_branch }}
