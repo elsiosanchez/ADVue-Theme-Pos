@@ -19,7 +19,7 @@ jobs:
   # Publish docker image in Github Container Registry to application
     # Build dist application VSF-Capybara-Custom-Theme
   build-app:
-    name: Build dist VSF-Capybara-Custom-Theme
+    name: Build dist vsf-capybara-custom-theme
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -98,39 +98,3 @@ jobs:
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
 
-  # Publish docker image in Digital Ocean registry to application
-  push-imame-ddor:
-    name: Push Docker image to Digital Ocean
-    needs:
-      - build-app
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
-
-      - name: Download build dist app
-        uses: actions/download-artifact@v2
-        with:
-          name: vsf-capybara-custom-theme
-
-      - name: Uncompress dist files
-        run: unzip vsf-capybara-custom-theme.zip -d dist-app
-
-      - name: Get branch name
-        id: branch-name
-        uses: tj-actions/branch-names@v4.8
-
-      - name: Build image
-        run: docker build -t vsf-capybara-custom-theme -f build/Dockerfile .
-
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      - name: Log in to DO Container Registry
-        run: doctl registry login --expiry-seconds 600
-      - name: Tag image
-        run:
-          docker tag vsf-capybara-custom-theme registry.digitalocean.com/erpya/vsf-capybara-custom-theme:${{ steps.branch-name.outputs.current_branch }}
-      - name: Push image to DO Container Registry
-        run: docker push registry.digitalocean.com/erpya/vsf-capybara-custom-theme:${{ steps.branch-name.outputs.current_branch }}
