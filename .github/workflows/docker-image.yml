@@ -73,6 +73,8 @@ jobs:
           # CONFIGURE DOCKER SECRETS INTO REPOSITORY
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          tags: ${{ github.sha }}
 
       - name: Set Lower Case to owner and repository
         run: |
